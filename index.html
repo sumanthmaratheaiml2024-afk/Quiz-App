@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Quiz</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div id="startScreen" class="screen active">
+            <h1>Welcome to Simple Quiz</h1>
+            <p>Test your knowledge with this interactive quiz!</p>
+            <button class="btn btn-primary" onclick="startQuiz()">Start Quiz</button>
+        </div>
+
+        <div id="quizScreen" class="screen">
+            <div class="quiz-header">
+                <div class="progress">
+                    <span id="questionNumber">1</span> / <span id="totalQuestions">10</span>
+                </div>
+                <div class="score-display">
+                    Score: <span id="currentScore">0</span>
+                </div>
+            </div>
+
+            <div class="quiz-container">
+                <h2 id="question" class="question"></h2>
+
+                <div id="choicesContainer" class="choices-container">
+                    <!-- Choices will be dynamically inserted here -->
+                </div>
+
+                <div class="quiz-navigation">
+                    <button class="btn btn-secondary" onclick="previousQuestion()" id="prevBtn" disabled>Previous</button>
+                    <button class="btn btn-primary" onclick="nextQuestion()" id="nextBtn">Next</button>
+                </div>
+            </div>
+
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+        </div>
+
+        <div id="resultScreen" class="screen">
+            <h1>Quiz Complete!</h1>
+            <div class="result-container">
+                <p class="result-text">Your Score:</p>
+                <p class="score-result"><span id="finalScore">0</span> / <span id="finalTotal">10</span></p>
+                <p class="percentage" id="percentage"></p>
+                <p class="performance" id="performanceMessage"></p>
+            </div>
+
+            <div class="result-details" id="resultDetails">
+                <h3>Summary</h3>
+                <div id="detailsList" class="details-list"></div>
+            </div>
+
+            <div class="result-actions">
+                <button class="btn btn-primary" onclick="startQuiz()">Retake Quiz</button>
+                <button class="btn btn-secondary" onclick="goHome()">Go Home</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
