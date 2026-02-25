@@ -57,6 +57,37 @@ let currentQuestionIndex = 0;
 let score = 0;
 let userAnswers = [];
 let isAnswered = false;
+let shuffledQuizData = [];
+
+// Shuffle function using Fisher-Yates algorithm
+function shuffleArray(array) {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
+
+// Shuffle choices for each question
+function shuffleChoices(questions) {
+    return questions.map(q => {
+        const choices = [...q.choices];
+        const correctAnswer = choices[q.correctAnswer];
+        
+        // Shuffle choices and find new correct answer index
+        for (let i = choices.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [choices[i], choices[j]] = [choices[j], choices[i]];
+        }
+        
+        return {
+            ...q,
+            choices: choices,
+            correctAnswer: choices.indexOf(correctAnswer)
+        };
+    });
+}
 
 // Initialize quiz
 function startQuiz() {
@@ -65,22 +96,25 @@ function startQuiz() {
     userAnswers = [];
     isAnswered = false;
     
+    // Shuffle questions and choices
+    shuffledQuizData = shuffleChoices(shuffleArray(quizData));
+    
     showScreen('quizScreen');
     loadQuestion();
 }
 
 // Load current question
 function loadQuestion() {
-    const question = quizData[currentQuestionIndex];
+    const question = shuffledQuizData[currentQuestionIndex];
     document.getElementById('question').textContent = question.question;
     
     // Update progress
     document.getElementById('questionNumber').textContent = currentQuestionIndex + 1;
-    document.getElementById('totalQuestions').textContent = quizData.length;
+    document.getElementById('totalQuestions').textContent = shuffledQuizData.length;
     document.getElementById('currentScore').textContent = score;
     
     // Update progress bar
-    const progress = ((currentQuestionIndex + 1) / quizData.length) * 100;
+    const progress = ((currentQuestionIndex + 1) / shuffledQuizData.length) * 100;
     document.getElementById('progressFill').style.width = progress + '%';
     
     // Render choices
@@ -125,7 +159,7 @@ function renderChoices(question) {
 function selectAnswer(index) {
     if (isAnswered) return;
     
-    const question = quizData[currentQuestionIndex];
+    const question = shuffledQuizData[currentQuestionIndex];
     userAnswers[currentQuestionIndex] = index;
     
     // Check if correct
@@ -145,7 +179,7 @@ function selectAnswer(index) {
 
 // Highlight correct and selected answers
 function highlightAnswer() {
-    const question = quizData[currentQuestionIndex];
+    const question = shuffledQuizData[currentQuestionIndex];
     const buttons = document.querySelectorAll('.choice-btn');
     
     buttons.forEach((button, index) => {
@@ -184,7 +218,7 @@ function nextQuestion() {
         return;
     }
     
-    if (currentQuestionIndex < quizData.length - 1) {
+    if (currentQuestionIndex < shuffledQuizData.length - 1) {
         currentQuestionIndex++;
         loadQuestion();
     } else {
@@ -205,7 +239,7 @@ function showResults() {
     showScreen('resultScreen');
     
     // Calculate results
-    const totalQuestions = quizData.length;
+    const totalQuestions = shuffledQuizData.length;
     const percentage = Math.round((score / totalQuestions) * 100);
     
     document.getElementById('finalScore').textContent = score;
@@ -237,7 +271,7 @@ function showDetailedResults() {
     const detailsList = document.getElementById('detailsList');
     detailsList.innerHTML = '';
     
-    quizData.forEach((question, index) => {
+    shuffledQuizData.forEach((question, index) => {
         const detail = document.createElement('div');
         const userAnswer = userAnswers[index];
         const isCorrect = userAnswer === question.correctAnswer;
